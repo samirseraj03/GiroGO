@@ -1,0 +1,7 @@
+{
+  "name": "GiroGo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
