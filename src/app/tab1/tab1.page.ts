@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { NavController } from '@ionic/angular';
+
+
 
 @Component({
   selector: 'app-tab1',
@@ -7,6 +10,18 @@ import { Component } from '@angular/core';
 })
 export class Tab1Page {
 
-  constructor() {}
+  constructor(
+    // for rotuing to antoher page
+    private navCtrl: NavController
+  ) {
+
+  }
+
+  // // para ir al dashbord
+  // navigateToPage() {
+  //   console.log("hola , he entrado")
+  //   this.navCtrl.navigateForward('DashbordPage');
+  // }
+
 
 }
