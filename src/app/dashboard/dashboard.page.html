@@ -1,21 +1,64 @@
 <ion-header [translucent]="true">
+  <link href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.css" rel="stylesheet" />
+  <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.js"></script>
+  <script src="_content/AzureMapsControl.Components/azure-maps-control.js"></script>
+  
+  <meta name="viewport" content="width=device-width, user-scalable=no" >
   <ion-toolbar>
     <ion-title>Dashboard</ion-title>
 
-
-
+    
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="false">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Dashboard</ion-title>
     </ion-toolbar>
   </ion-header>
 
+
+
+
+  <div class="row container position-absolute zindex-fixed" style="z-index: 1;">
+
+    <div class="col-3">
+      <div class="flexbox  align-items-start mt-2 p-1" style="z-index: 1 ;">
+        <button class="border border-dark" type="button" (click)="initializeMap()" style="display: contents;">
+          <svg class="w-25" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="white" version="1.1" viewBox="0 0 489.536 489.536" enable-background="new 0 0 489.536 489.536">
+            <g>
+              <g>
+                <path d="m488.554,476l-99-280.2c-1-4.2-5.2-7.3-9.4-7.3h-45.6c12.9-31.1 19.6-54.9 19.6-70.8 0-64.6-50-117.7-112.5-117.7-61.5,0-112.5,52.1-112.5,117.7 0,17.6 8.2,43.1 19.9,70.8h-39.7c-4.2,0-8.3,3.1-9.4,7.3l-99,280.2c-3.2,10.3 6.3,13.5 9.4,13.5h468.8c4.2,0.5 12.5-4.2 9.4-13.5zm-246.9-455.3c51,1.06581e-14 91.7,43.7 91.7,96.9 0,56.5-79.2,182.3-91.7,203.1-31.3-53.1-91.7-161.5-91.7-203.1 0-53.1 40.6-96.9 91.7-96.9zm-216.7,448l91.7-259.4h41.7c29.9,64.1 83.3,151 83.3,151s81.4-145.7 83.8-151h47.4l91.7,259.4h-439.6z"/>
+                <rect width="136.5" x="177.054" y="379.1" height="20.8"/>
+                <path d="m289.554,108.2c0-26-21.9-47.9-47.9-47.9s-47.9,21.9-47.9,47.9 20.8,47.9 47.9,47.9c27.1,0 47.9-21.8 47.9-47.9zm-75-1c0-14.6 11.5-27.1 27.1-27.1s27.1,12.5 27.1,27.1-11.5,27.1-27.1,27.1c-14.6,2.84217e-14-27.1-12.5-27.1-27.1z"/>
+              </g>
+            </g>
+          </svg> 
+           
+        </button>
+
+        <!-- <button class="border border-dark" type="button" (click)="getRuta()">obtener ruta</button> -->
+      
+      </div>
+
+    </div>
+
+    <div class="col">
+
+      <div class=" options">
+        <input class="search_input" placeholder="Search">
+        <button class="search_btn">Search</button>
+      </div>
+    </div>
+
+
+  </div>
+
   <!-- Coloca el mapa dentro del contenido -->
-  <div id="myMap" class="w-100 d-flex justify-content-center"></div>
+  <div id="myMap" class="w-100 h-100 m-0 position-absolute zindex-dropdown" style="overflow: hidden;"></div>
+
+
 
 
 </ion-content>
