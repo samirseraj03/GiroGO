@@ -1,19 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Type } from '@angular/core';
 import * as atlas from 'azure-maps-control'; // Or the correct path if different
+import SupabaseService from "../../Types/SupabaseService";
+import { Location, User, UserType, cars, carType } from '../../Types/SupabaseService';
 
 
 
+ 
 
 
 declare const Microsoft: any; // Declaración para permitir el acceso a la API de Microsoft Maps
 //declare const atlas : any
+const supabaseService = new SupabaseService;
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage  {
+export class DashboardPage   {
 
   title = 'azure-maps-web-sdk-test'
   map : any
@@ -21,8 +25,37 @@ export class DashboardPage  {
   longitude : any
 
 
+    async supabase() {
+      try {
+        var user: User = {
+          name: 'samir',
+          email: 'samirseraj03@gmail.com',
+          user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
+          address: '', // Dirección opcional
+          is_available: true, // Disponibilidad opcional
+      };
+          // Ejemplo de ubicación
+          var location: Location = {
+              longitude: -74.0059,
+              latitude: 40.7128,
+          };
 
-  constructor() { }
+          var car : cars = {
+            user_id : 1 ,
+            type: { type : 'car'},
+            photo : "",
+          }
+
+
+          // Insertar usuario y ubicación
+          await supabaseService.insertUser(user, location);
+          //await supabaseService.insertCar()
+      } catch (error) {
+          console.error('Error in supabase function:', error);
+      }
+  }
+ 
+  
 
   
 
