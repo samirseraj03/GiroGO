@@ -1,11 +1,14 @@
-import { Component, OnInit, Type } from '@angular/core';
-import * as atlas from 'azure-maps-control'; // Or the correct path if different
+import { Component, OnInit  } from '@angular/core';
 import SupabaseService from "../../Types/SupabaseService";
 import { Location, User, UserType, cars, carType , Travel , Rating} from '../../Types/SupabaseService';
 import { NavController } from '@ionic/angular';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import * as mapboxgl from 'mapbox-gl';
+import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
-declare const Microsoft: any; // Declaración para permitir el acceso a la API de Microsoft Maps
+
+
 //declare const atlas : any
 const supabaseService = new SupabaseService;
 
@@ -13,72 +16,121 @@ const supabaseService = new SupabaseService;
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  styles: [],
 })
+
+
 
 export class DashboardPage implements OnInit  {
 
   constructor (
     private navCtrl: NavController,
     private router: ActivatedRoute,
+
     
     ) {}
 
+
   title = 'azure-maps-web-sdk-test'
-  map : any
   latitude : any 
   longitude : any
   id_user : any
   is_available : boolean = false 
   user : any
+  map : any
+  markers : any = []
+
+
+
 
 
   // para obtener los id del usuario para poder interctauar con el mapa
-  ngOnInit(): void {
-   this.user =  this.SupaBaseGet()
+  async ngOnInit() {
+    (mapboxgl as any).accessToken = environment.accessToken;
+    await this.getGeolocation()
+    this.user =  this.SupaBaseGet()
+    this.getMapBox();
   }
   
-    // primera funcion de supa base para desplegar los primeros usuarios y dejarlo como ejemplo
-    async supabase() {
-      try {
-        var user: User = {
-          name: 'samir',
-          email: 'samirseraj03@gmail.com',
-          password : 'aref1310',
-          user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
-          address: '', // Dirección opcional
-          is_available: true, // Disponibilidad opcional
-      };
-          // Ejemplo de ubicación
-          var location: Location = {
-              longitude: -74.0059,
-              latitude: 40.7128,
-          };
 
-      
-          // Insertar usuario y ubicación
+  // inicilizamos el mapa
+  getMapBox() {
+    // desplegar el map
+     this.map = new mapboxgl.Map({
+        container: 'Mapa-de-box',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [this.longitude, this.latitude],
+        zoom: 15.15,
+    });
 
-          // obtenemos la id del user: 
-          this.id_user = await supabaseService.insertUser(user, location);
+    // añadir el marcador del usuario 
+    const marker = new mapboxgl.Marker()
+      .setLngLat([this.longitude, this.latitude])
+      .addTo(this.map);
 
-          var car : cars = {
-            user_id : this.id_user ,
-            type: { type : 'car'},
-            photo : "",
-          }
-          await supabaseService.insertCar(car)
-      } catch (error) {
-          console.error('Error in supabase function:', error);
-      }
+      // añadimos el buscador 
+      this.map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl
+        })
+        );
+      // añadimos el popup del usuario para mostrar su informacion actual.
+      this.map.on('click', () => {
+        const popup = new mapboxgl.Popup({ offset: [0, -15] , className : 'poopup' , closeOnClick : true })
+        .setLngLat([this.longitude , this.latitude])
+        .setHTML(
+        `<h3 class="text text-dark" >hola</h3><p class="text text-dark" >hola</p><button> eligir </button>`
+         )
+        .addTo(this.map);
+      })
+
+
+   
+
+    
+
+
   }
 
-  async SupaBaseGet(){
-    let user = await supabaseService.getUser(1)
-    this.id_user = user.id
-    return user
+
+  initializeMap(): void {
+
+    this.map.flyTo({
+      center: [this.longitude, this.latitude], // Establece las coordenadas a las que quieres que la cámara se mueva
+      zoom: 13, // Opcional: Establece el nivel de zoom
+      pitch: 60, // Opcional: Establece el ángulo de inclinación de la cámara
+      bearing: -20 // Opcional: Establece la rotación de la cámara
+    });
+
+    const locations = [
+      { "name": "Ubicación 1", "latitude": 40.7128, "longitude": -74.0060 },
+      { "name": "Ubicación 2", "latitude": 34.0522, "longitude": -118.2437 },
+      { "name": "Ubicación 3", "latitude": 51.5074, "longitude": -0.1278 }
+    ];
+
+    for (const location of locations) {
+      const marker = new mapboxgl.Marker()
+        .setLngLat([location.longitude, location.latitude])
+        .addTo(this.map);
+
+      // Almacena la referencia del marcador en el arreglo
+      this.markers.push(marker);
+    }
   }
+
+
+
+
+
+
 
   // hacemos para que el usuario pueda encender el mapa y desplegar los conductores disponibles tambien 
   asyncUser(){
+
+    this.markers.forEach((marker: { remove: () => any; }) => marker.remove());
+    this.markers = []; // Limpia el arreglo después de eliminar los marcadores
+
 
     if (this.is_available === false){
       this.is_available = true
@@ -90,70 +142,8 @@ export class DashboardPage implements OnInit  {
     }
   }
  
-  
 
-  
-
- async ngAfterViewInit() {
-  
-    await this.getGeolocation()
-    this.GetMap()
-    await this.initializeMap()
-  }
-
-  GetMap() {
-
-    console.log(this.latitude);
-    console.log(this.longitude);
-
-    try {
-     this.map = new atlas.Map('myMap', {
-      center: new atlas.data.Position(this.longitude, this.latitude),
-      zoom: 20, // Nivel de zoom inicial
-      showLogo : false,
-      showFeedback: false ,
-      showFeedbackLink : false,
-      showTileBoundaries : false,
-      language : 'es-ES' ,
-      showBuildingModels : true,
-      style : 'night',
-      authOptions: {
-        authType: atlas.AuthenticationType.subscriptionKey,
-        subscriptionKey: 'qbTL3CFdHbknZkT8RdqkemI1AY3oIM21Uci4G02bLHU' // También puedes pasar la clave de API aquí
-      }
-    
-    });
-
-    this.map.controls.add([
-      new atlas.control.ZoomControl(),
-      new atlas.control.CompassControl(),
-      new atlas.control.PitchControl(),
-      new atlas.control.StyleControl()
-    ] , {
-      position : atlas.ControlPosition.TopRight
-    })
-
-    
-    this.map.events.add('ready' , () =>{
-
-      var dataSoruce = new atlas.source.DataSource();
-      this.map.sources.add(dataSoruce);
-
-      var layer  = new atlas.layer.SymbolLayer(dataSoruce);
-      this.map.layers.add(layer)
-      dataSoruce.add(new atlas.data.Point([this.longitude, this.latitude]))
-
-    })
-    console.log(this.map);
-
-  }
-  catch (error) {
-    console.error('Error al cargar Azure Maps:', error);
-  }
-
-}
-
-
+  // para obtener nuestra localizacion acutal
   getGeolocation(): Promise<{ latitude_2: number, longitude_2: number }> {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
@@ -181,75 +171,45 @@ export class DashboardPage implements OnInit  {
     });
   }
 
-  getRoute(): void {
-    this.map = new Microsoft.Maps.Map('#map', {});
 
-    // Definir las ubicaciones de origen y destino
-    const origen = new Microsoft.Maps.Location(40.7128, -74.006); // Girona
-    const destino = new Microsoft.Maps.Location(40.5475, -2.7722222); // aeropuerto de girona
-
-    Microsoft.Maps.loadModule('Microsoft.Maps.Directions', () => {
-      const directionsManager = new Microsoft.Maps.Directions.DirectionsManager(this.map);
-      const seattleWaypoint = new Microsoft.Maps.Directions.Waypoint({ location: origen });
-      directionsManager.addWaypoint(seattleWaypoint);
-      const workWaypoint = new Microsoft.Maps.Directions.Waypoint({ location: destino });
-      directionsManager.addWaypoint(workWaypoint);
-      directionsManager.setRenderOptions({ itineraryContainer: '#directionsItinerary' });
-      directionsManager.calculateDirections();
-    });
-  }
-
-  initializeMap(): void {
-
-    const locations = [
-      { "name": "Ubicación 1", "latitude": 40.7128, "longitude": -74.0060 },
-      { "name": "Ubicación 2", "latitude": 34.0522, "longitude": -118.2437 },
-      { "name": "Ubicación 3", "latitude": 51.5074, "longitude": -0.1278 }
-    ];
-
-    this.getGeolocation().then(({ latitude_2, longitude_2 }) => {
-      //const map = new Microsoft.Maps.Map('#mymap');
-      const currentLocation = new atlas.data.Position(longitude_2, latitude_2);
-      this.map.setCamera({ center: currentLocation, zoom: 25 });
-      //const currentMarker = new Microsoft.Maps.Pushpin(currentLocation, { title: 'Ubicación Actual' });
-      //map.entities.push(currentMarker);
-      for (const location of locations) {
-        this.map.events.add('ready' , () =>{
-          var dataSoruce = new atlas.source.DataSource();
-          this.map.sources.add(dataSoruce);
-          var layer  = new atlas.layer.SymbolLayer(dataSoruce);
-          this.map.layers.add(layer)
-          dataSoruce.add(new atlas.data.Point([location.longitude, location.latitude  ]))
-    
-        })
-      }
-    }).catch(error => {
-      console.error("Error:", error);
-    });
-  }
-
-  geocodeQuery(query: string): void {
-    let searchManager: any;
-    if (!searchManager) {
-      Microsoft.Maps.loadModule('Microsoft.Maps.Search', () => {
-        searchManager = new Microsoft.Maps.Search.SearchManager(this.map);
-        this.geocodeQuery(query);
-      });
-    } else {
-      const searchRequest = {
-        where: query,
-        callback: (r: any) => {
-          if (r && r.results && r.results.length > 0) {
-            const pin = new Microsoft.Maps.Pushpin(r.results[0].location);
-            this.map.entities.push(pin);
-            this.map.setView({ bounds: r.results[0].bestView });
-          };
-        },
-        errorCallback: (e: any) => {
-          alert("No results found.");
+    // obtener el usuario
+    async SupaBaseGet(){
+      let user = await supabaseService.getUser(1)
+      this.id_user = user.id
+      return user
+    }
+      // primera funcion de supa base para desplegar los primeros usuarios y dejarlo como ejemplo
+      async supabase() {
+        try {
+          var user: User = {
+            name: 'samir',
+            email: 'samirseraj03@gmail.com',
+            password : 'aref1310',
+            user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
+            address: '', // Dirección opcional
+            is_available: true, // Disponibilidad opcional
+        };
+            // Ejemplo de ubicación
+            var location: Location = {
+                longitude: this.longitude,
+                latitude: this.latitude,
+            };
+  
+        
+            // Insertar usuario y ubicación
+  
+            // obtenemos la id del user: 
+            this.id_user = await supabaseService.insertUser(user, location);
+  
+            var car : cars = {
+              user_id : this.id_user ,
+              type: { type : 'car'},
+              photo : "",
+            }
+            await supabaseService.insertCar(car)
+        } catch (error) {
+            console.error('Error in supabase function:', error);
         }
-      };
-      searchManager.geocode(searchRequest);
-    };
-   }
+    }
+ 
   }

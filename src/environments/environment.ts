@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  accessToken: 'pk.eyJ1Ijoic2FtaXJzZXJhaiIsImEiOiJjbHQxbW12YzAxNDZzMmpwMjZ1ampwY2d5In0.9mdf_NFaObRYnB1yQSYwWA', // Optional, can also be set per map (accessToken input of mgl-map)
+
 };
 
 /*
