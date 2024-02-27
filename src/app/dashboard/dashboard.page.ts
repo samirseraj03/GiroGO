@@ -16,7 +16,6 @@ const supabaseService = new SupabaseService;
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  styles: [],
 })
 
 
@@ -75,12 +74,13 @@ export class DashboardPage implements OnInit  {
             mapboxgl: mapboxgl
         })
         );
+
       // añadimos el popup del usuario para mostrar su informacion actual.
       this.map.on('click', () => {
-        const popup = new mapboxgl.Popup({ offset: [0, -15] , className : 'poopup' , closeOnClick : true })
+        const popup = new mapboxgl.Popup({ offset: [0, 0] , className : 'stylepopup' , closeOnClick : true  ,  maxWidth : '300px'})
         .setLngLat([this.longitude , this.latitude])
         .setHTML(
-        `<h3 class="text text-dark" >hola</h3><p class="text text-dark" >hola</p><button> eligir </button>`
+        `<h3 class="stylepopup text text-dark" >hola</h3><p class="stylepopup text text-dark" >hola</p><button class="stylepopup"> eligir </button>`
          )
         .addTo(this.map);
       })
