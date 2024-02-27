@@ -1,12 +1,9 @@
 import { Component, OnInit, Type } from '@angular/core';
 import * as atlas from 'azure-maps-control'; // Or the correct path if different
 import SupabaseService from "../../Types/SupabaseService";
-import { Location, User, UserType, cars, carType } from '../../Types/SupabaseService';
-
-
-
- 
-
+import { Location, User, UserType, cars, carType , Travel , Rating} from '../../Types/SupabaseService';
+import { NavController } from '@ionic/angular';
+import { ActivatedRoute, Route } from '@angular/router';
 
 declare const Microsoft: any; // Declaración para permitir el acceso a la API de Microsoft Maps
 //declare const atlas : any
@@ -17,19 +14,36 @@ const supabaseService = new SupabaseService;
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
-export class DashboardPage   {
+
+export class DashboardPage implements OnInit  {
+
+  constructor (
+    private navCtrl: NavController,
+    private router: ActivatedRoute,
+    
+    ) {}
 
   title = 'azure-maps-web-sdk-test'
   map : any
   latitude : any 
   longitude : any
+  id_user : any
+  is_available : boolean = false 
+  user : any
 
 
+  // para obtener los id del usuario para poder interctauar con el mapa
+  ngOnInit(): void {
+   this.user =  this.SupaBaseGet()
+  }
+  
+    // primera funcion de supa base para desplegar los primeros usuarios y dejarlo como ejemplo
     async supabase() {
       try {
         var user: User = {
           name: 'samir',
           email: 'samirseraj03@gmail.com',
+          password : 'aref1310',
           user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
           address: '', // Dirección opcional
           is_available: true, // Disponibilidad opcional
@@ -40,19 +54,40 @@ export class DashboardPage   {
               latitude: 40.7128,
           };
 
+      
+          // Insertar usuario y ubicación
+
+          // obtenemos la id del user: 
+          this.id_user = await supabaseService.insertUser(user, location);
+
           var car : cars = {
-            user_id : 1 ,
+            user_id : this.id_user ,
             type: { type : 'car'},
             photo : "",
           }
-
-
-          // Insertar usuario y ubicación
-          await supabaseService.insertUser(user, location);
-          //await supabaseService.insertCar()
+          await supabaseService.insertCar(car)
       } catch (error) {
           console.error('Error in supabase function:', error);
       }
+  }
+
+  async SupaBaseGet(){
+    let user = await supabaseService.getUser(1)
+    this.id_user = user.id
+    return user
+  }
+
+  // hacemos para que el usuario pueda encender el mapa y desplegar los conductores disponibles tambien 
+  asyncUser(){
+
+    if (this.is_available === false){
+      this.is_available = true
+      supabaseService.UpdateUser( this.id_user, {'is_available' : this.is_available})
+    }
+    else {
+      this.is_available = false
+      supabaseService.UpdateUser( this.id_user, {'is_available' : this.is_available})
+    }
   }
  
   
