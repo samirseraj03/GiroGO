@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import * as mapboxgl from 'mapbox-gl';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-
+import { LocationService } from "../../Types/LocationServices";
 
 
 //declare const atlas : any
@@ -22,11 +22,12 @@ const supabaseService = new SupabaseService;
 
 export class DashboardPage implements OnInit  {
 
+
   constructor (
     private navCtrl: NavController,
     private router: ActivatedRoute,
-
-    
+    private LocationService: LocationService
+        
     ) {}
 
 
@@ -45,10 +46,21 @@ export class DashboardPage implements OnInit  {
 
   // para obtener los id del usuario para poder interctauar con el mapa
   async ngOnInit() {
-    (mapboxgl as any).accessToken = environment.accessToken;
-    await this.getGeolocation()
-    this.user =  this.SupaBaseGet()
-    this.getMapBox();
+
+    this.LocationService.checkLocationPermission().then(async () => {
+
+      (mapboxgl as any).accessToken = environment.accessToken;
+      await this.getGeolocation()
+      this.user =  this.SupaBaseGet()
+      this.getMapBox();
+
+    }).catch(error => {
+      console.log(error)
+    });
+
+
+
+
   }
   
 
@@ -77,21 +89,22 @@ export class DashboardPage implements OnInit  {
 
       // añadimos el popup del usuario para mostrar su informacion actual.
       this.map.on('click', () => {
-        const popup = new mapboxgl.Popup({ offset: [0, 0] , className : 'stylepopup' , closeOnClick : true  ,  maxWidth : '300px'})
+        const popup = new mapboxgl.Popup({ offset: [0, 0] , className : 'stylepopup' ,  maxWidth : '240px'})
         .setLngLat([this.longitude , this.latitude])
         .setHTML(
-        `<h3 class="stylepopup text text-dark" >hola</h3><p class="stylepopup text text-dark" >hola</p><button class="stylepopup"> eligir </button>`
+        `<h3 class="stylepopup text text-dark" >hola como estas que tal </h3><p class="stylepopup text text-dark" >hola</p><button class="stylepopup w-100"> eligir </button>`
          )
         .addTo(this.map);
       })
 
-
-   
-
-    
+      
 
 
   }
+
+
+
+
 
 
   initializeMap(): void {
@@ -102,6 +115,8 @@ export class DashboardPage implements OnInit  {
       pitch: 60, // Opcional: Establece el ángulo de inclinación de la cámara
       bearing: -20 // Opcional: Establece la rotación de la cámara
     });
+
+
 
     const locations = [
       { "name": "Ubicación 1", "latitude": 40.7128, "longitude": -74.0060 },
@@ -183,7 +198,7 @@ export class DashboardPage implements OnInit  {
         try {
           var user: User = {
             name: 'samir',
-            email: 'samirseraj03@gmail.com',
+            email: 'sa@gmail.com',
             password : 'aref1310',
             user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
             address: '', // Dirección opcional
