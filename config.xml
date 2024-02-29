@@ -1,0 +1,18 @@
+<widget ...>
+    <name>Nombre de tu app</name>
+    <!-- Otros elementos de configuración -->
+
+    <!-- Permisos para Android -->
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+    </platform>
+
+    <!-- Permisos para iOS -->
+    <platform name="ios">
+        <!-- Agrega los permisos de ubicación para iOS según sea necesario -->
+    </platform>
+</widget>

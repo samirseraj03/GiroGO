@@ -9,37 +9,12 @@ const { Geolocation } = Plugins;
 })
 export class LocationService {
 
-  async checkLocationPermission() {
-    try {
-      // Solicitar permiso de ubicación
-      const permissionResult = await Geolocation['requestPermissions']();
-      
-      if (permissionResult && permissionResult.location === 'granted') {
-        // Permiso de ubicación otorgado, puedes realizar operaciones de geolocalización
-        this.getCurrentPosition();
-      } else {
-        // Permiso de ubicación denegado
-        console.log('El permiso de ubicación ha sido denegado');
-      }
-    } catch (error) {
-      console.error('Error al solicitar permiso de ubicación:', error);
-    }
-  }
-  
-  async getCurrentPosition() {
-    try {
-      // Obtener la posición actual del dispositivo
-      const position = await Geolocation['getCurrentPosition']();
-      
-      // Manejar la posición obtenida
-      this.handlePosition(position);
-    } catch (error) {
-      console.error('Error al obtener la posición actual:', error);
-    }
-  }
-  
-  handlePosition(position: GeolocationPosition) {
-    // Manejar la posición actual aquí
-    console.log('Posición actual:', position);
+onUbicacionConcedida : any
+onErrorDeUbicacion : any
+opcionesDeSolicitud : any
+
+
+  async checkLocationPermission() : Promise<void> {
+   return navigator.geolocation.getCurrentPosition(this.onUbicacionConcedida, this.onErrorDeUbicacion, this.opcionesDeSolicitud);
   }
 }

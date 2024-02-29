@@ -6,7 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import * as mapboxgl from 'mapbox-gl';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import { LocationService } from "../../Types/LocationServices";
+
+import { Geolocation } from '@ionic-native/geolocation/ngx'; // Si estás utilizando Ionic 4/5/6
+
 
 
 //declare const atlas : any
@@ -26,14 +28,13 @@ export class DashboardPage implements OnInit  {
   constructor (
     private navCtrl: NavController,
     private router: ActivatedRoute,
-    private LocationService: LocationService
         
     ) {}
 
 
   title = 'azure-maps-web-sdk-test'
-  latitude : any 
-  longitude : any
+  latitude : any = 41.956389
+  longitude : any = 2.633053
   id_user : any
   is_available : boolean = false 
   user : any
@@ -46,19 +47,11 @@ export class DashboardPage implements OnInit  {
 
   // para obtener los id del usuario para poder interctauar con el mapa
   async ngOnInit() {
-
-    this.LocationService.checkLocationPermission().then(async () => {
-
-      (mapboxgl as any).accessToken = environment.accessToken;
-      await this.getGeolocation()
-      this.user =  this.SupaBaseGet()
-      this.getMapBox();
-
-    }).catch(error => {
-      console.log(error)
-    });
-
-
+    
+    (mapboxgl as any).accessToken = environment.accessToken;
+    await this.getGeolocation()
+    this.user =  this.SupaBaseGet()
+    this.getMapBox();
 
 
   }
@@ -104,10 +97,15 @@ export class DashboardPage implements OnInit  {
 
 
 
+ async initializeMap() {
 
 
+  //   (mapboxgl as any).accessToken = environment.accessToken;
+  //  await this.getGeolocation()
+  //   this.user =  this.SupaBaseGet()
+  //   this.getMapBox();
 
-  initializeMap(): void {
+  //   console.log("thismap" , this.map)
 
     this.map.flyTo({
       center: [this.longitude, this.latitude], // Establece las coordenadas a las que quieres que la cámara se mueva
@@ -116,7 +114,7 @@ export class DashboardPage implements OnInit  {
       bearing: -20 // Opcional: Establece la rotación de la cámara
     });
 
-
+    console.log("holaaaaa")
 
     const locations = [
       { "name": "Ubicación 1", "latitude": 40.7128, "longitude": -74.0060 },
@@ -180,12 +178,24 @@ export class DashboardPage implements OnInit  {
           }
         );
       } else {
-        console.log("El navegador no soporta la geolocalización");
-        reject("Geolocalización no soportada");
+        this.getCurrentPosition()
+        console.log("El navegador no soporta la geolocalización es movil");  
       }
     });
   }
 
+
+  getCurrentPosition() {
+    // this.geolocation.getCurrentPosition().then((resp) => {
+    //   this.latitude =  resp.coords.latitude
+    //   this.longitude =  resp.coords.longitude
+
+    //   console.log('Latitud: ' + resp.coords.latitude);
+    //   console.log('Longitud: ' + resp.coords.longitude);
+    // }).catch((error) => {
+    //   console.log('Error al obtener la ubicación', error);
+    // });
+  }
 
     // obtener el usuario
     async SupaBaseGet(){
