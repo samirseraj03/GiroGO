@@ -16,6 +16,7 @@ export interface Location {
     email: string;
     password : string;
     user_type: UserType;
+    avatar_url?: string;
     location_id?: number;
     address?: string;
     is_available?: boolean;
@@ -62,7 +63,7 @@ export interface Location {
 
 export default class SupabaseService {
     public supabase: SupabaseClient;
-    
+
     private SUPABASE_URL= environment.supabaseUrl;
     private SUPABASE_KEY= environment.supabaseKey;
 

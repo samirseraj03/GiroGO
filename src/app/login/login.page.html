@@ -7,53 +7,21 @@
 <ion-content scrollY="false">
   <ion-card>
     <ion-card-content>
-      <form (ngSubmit)="login()" [formGroup]="credentials">
-        <ion-item>
-          <ion-label position="stacked">Your Email</ion-label>
-          <ion-input
-            type="email"
-            inputmode="email"
-            placeholder="Email"
-            formControlName="email"
-          ></ion-input>
-          <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors"
-            >Please insert your email</ion-note
-          >
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Password</ion-label>
-          <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
-          <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors"
-            >Please insert your password</ion-note
-          >
-        </ion-item>
-        <ion-button type="submit" expand="block" strong="true" [disabled]="!credentials.valid"
-          >Sign in</ion-button
-        >
-
-        <div class="ion-margin-top">
-          <ion-button
-            type="button"
-            expand="block"
-            color="primary"
-            fill="outline"
-            routerLink="register"
-          >
-            <ion-icon name="person-outline" slot="start"></ion-icon>
-            Create Account
-          </ion-button>
-
-          <ion-button type="button" expand="block" color="secondary" (click)="forgotPassword()">
-            <ion-icon name="key-outline" slot="start"></ion-icon>
-            Forgot password?
-          </ion-button>
-
-          <ion-button type="button" expand="block" color="tertiary" (click)="getMagicLink()">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
-            Get a Magic Link
-          </ion-button>
-        </div>
-      </form>
+      <div class="ion-padding">
+        <h1>LOGIN</h1>
+        <p>Entra utilizando Magic Link con tu correo electronico!</p>
+      </div>
+      <ion-list>
+        <form (ngSubmit)="handleLogin($event)">
+          <ion-item>
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input [(ngModel)]="email" name="email" autocomplete type="email"></ion-input>
+          </ion-item>
+          <div class="ion-text-center">
+            <ion-button type="submit" fill="clear">Login</ion-button>
+          </div>
+        </form>
+      </ion-list>
     </ion-card-content>
   </ion-card>
 </ion-content>

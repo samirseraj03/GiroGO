@@ -45,6 +45,7 @@ export class DashboardPage implements OnInit  {
           email: 'samirseraj03@gmail.com',
           password : 'aref1310',
           user_type: { type: 'both' }, // Asignando el tipo de usuario como 'user'
+          avatar_url: '',
           address: '', // Dirección opcional
           is_available: true, // Disponibilidad opcional
       };

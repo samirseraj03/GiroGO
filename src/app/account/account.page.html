@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form>
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input type="email" name="email" [(ngModel)]="email" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Name</ion-label>
+      <ion-input type="text" name="name" [(ngModel)]="profile.name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Address</ion-label>
+      <ion-input type="text" name="address" [(ngModel)]="profile.address"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Availability</ion-label>
+      <ion-input type="text" name="username" [(ngModel)]="profile.is_available"></ion-input>
+    </ion-item>
+
+    <div class="ion-text-center">
+      <ion-button fill="clear" (click)="updateProfile()">Update Profile</ion-button>
+    </div>
+  </form>
+
+  <div class="ion-text-center">
+    <ion-button fill="clear" (click)="signOut()">Log Out</ion-button>
+  </div>
+</ion-content>
