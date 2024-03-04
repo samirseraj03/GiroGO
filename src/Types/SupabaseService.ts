@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { data } from 'azure-maps-control';
+import { BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 // importamos los interfaces :
@@ -60,9 +62,9 @@ export interface Location {
 
 export default class SupabaseService {
     public supabase: SupabaseClient;
-
-    private SUPABASE_URL= 'https://gkkbzksbxpaxhqvzswrp.supabase.co'
-    private SUPABASE_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdra2J6a3NieHBheGhxdnpzd3JwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNjg4NDA5NSwiZXhwIjoyMDIyNDYwMDk1fQ.7no588OrI-WpXuNXADKbp81_XFLC8G-J87b0TLzgVBg'
+    
+    private SUPABASE_URL= environment.supabaseUrl;
+    private SUPABASE_KEY= environment.supabaseKey;
 
    
     constructor() {
