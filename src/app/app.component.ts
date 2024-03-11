@@ -16,7 +16,7 @@ export class AppComponent {
       console.log(session)
       
       if(session?.user) {
-        this.router.navigate(['/account'])
+        // this.router.navigate(['/ac'])
       }
     })
   }

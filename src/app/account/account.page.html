@@ -5,6 +5,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <app-avatar
+    [avatarUrl]="this.profile.avatar_url"
+    (upload)="updateProfile($event)"
+  ></app-avatar>
   <form>
     <ion-item>
       <ion-label position="stacked">Email</ion-label>
